@@ -1,21 +1,34 @@
-# Like on GitHub
-> Chrome extension to save links that you like on GitHub repository that you specify
+##  Like on GitHub  [example](https://github.com/willowj/github-collections)
+> Chrome extension to save any note or link to github repo modified from [Idnan](https://github.com/Idnan/like-on-github)
 
-It makes it seem-less to create "today-i-read" repository where you put all the links that you read or liked. Just click a button and the link will be committed to your repository under the current date.
+collect any interesting link or note to github repo
 
-## Installation
+- feature
+  - with mouse select text as cite
+  - caratory by tag
+  - can add notes
 
-- Install it from the chrome webstore by following the URL: https://goo.gl/Wj595G
-- Or download the extension and [load it manually](http://superuser.com/questions/247651/how-does-one-install-an-extension-for-chrome-browser-from-the-local-file-system/247654#247654)
+### Installation
 
-## Setup
+- download the extension and [load it manually](http://superuser.com/questions/247651/how-does-one-install-an-extension-for-chrome-browser-from-the-local-file-system/247654#247654) 
+
+### Setup
 
 - First things first, create a repository to which you would want the links to the liked content be added
+
 - Now add a file e.g. README.md. This is the file that will be holding your likes and you'll have to provide it while setting up the options in the step below.
+
 - Right click the extension icon (thumb icon) in the bar and click the options page
+
 - At the options page, add the specified details
 
   ![Options Page](http://i.imgur.com/a8grypPr.png)
+
+  options page notice:
+
+  ​	username ,repo, file path must be  correct, 
+
+  ​	commiter name and email with not null  will be ok.
 
 - Make sure to select the `repo` option while generating token.
 
@@ -23,22 +36,44 @@ It makes it seem-less to create "today-i-read" repository where you put all the 
 
 - Voila! You are all set.
 
-## How to Use
+### How to Use
 
-#### Press Cmd + Shift + L and a window will open where you can edit the link title and commit message. After verify the title/message click save and link will be saved in your GitHub repository.
+1. select text with mouse  (optional)
+2. press CTR + Shift + L ; A window will open where you can edit the link title and commit message. 
+3.  verify  input options 
+4. click save and link will be saved in your GitHub repository.
 
 ![How to Use](http://i.imgur.com/hUC9ed8r.png)
 
-#### Liked content will be there in your linked repository
+ 
 
-![Liked Content](http://i.imgur.com/C050TKB.png)
+![](example.png)
+
+- **input options explain ** :
+
+    tag : default as `collect` ,in title auto to upcase;  
+
+    title : default as web title
+
+    notes : default as ` `
+
+    commit meesage: default  as "new link to github repo" from commiter you set
+
+  
+
+  mouse selected text  is hidden ,you can inspect css-selector `.logh input[name="cite"]`
+
+### tips : eat with following better
+
+-  [chrome-github-mate](https://github.com/rubyerme/chrome-github-mate) : add toc on the right
 
 
-## Contributions
+
+#### Contributions
 
 Feel free to share, fork, enhance, create PRs or lock issues.
 
-## License
+#### License
 
 MIT &copy; [Adnan Ahmed](http://github.com/idnan)
 
