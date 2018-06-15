@@ -28,7 +28,7 @@
     font-weight: bold;
 }
 
-.logh .clogl input[type='text'] {
+.logh .clogl input[type='text'],input[name='tag'] {
     color: #1d2129;
     width: 95%;
     margin-bottom: 18px;
@@ -146,3 +146,4 @@
     margin-right: 2px;
     font-weight: bold;
 }
+

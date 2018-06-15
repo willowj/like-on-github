@@ -6,6 +6,16 @@
  *
  * MIT (c) Adnan Ahmed <mahradnan@hotmail.com>
  */
+
+function getMouseSelectText  () {
+    if (document.selection){
+        return document.selection.createRange().text;
+    }else{
+
+    return window.getSelection().toString();
+    }
+    // body...
+}
 (function () {
 
     var Helper = {
@@ -25,6 +35,7 @@
 
             $(Config.EX_COTAINER).hide();
             $(Config.EX_INPUT_TITLE).val('');
+            $(Config.EX_INPUT_NOTE).val('');
             $(Config.EX_INPUT_URL).val('');
             $(Config.EX_INPUT_COMMENT).val('');
 
@@ -97,33 +108,47 @@
      * @type {Object}
      */
     var Config = {
-
         // Templates
         MAIN_TEMPLATE: '<div class="logh">' +
-        '<h3>Like On GitHub</h3>' +
-        '<div class="clogl">' +
-        '<div class="lbllogh"><span class="reqlogh">*</span>Title (label for the link)</div>' +
-        '<input type="text" name="title">' +
-        '</div>' +
-        '<div class="clogl">' +
-        '<input type="hidden" name="url">' +
-        '</div>' +
-        '<div class="clogl">' +
-        '<div class="lbllogh"><span class="reqlogh">*</span>Comment (commit message)</div>' +
-        '<textarea name="comment"></textarea>' +
-        '</div>' +
-        '<div id="action-btns">' +
-        '<div class="btn btn-primary" id="logh_btn_save">Save</div>' +
-        '<div class="btn" id="logh_btn_cancel">Cancel</div>' +
-        '</div>' +
-        '<div class="elogh hlogh">' +
-        '<p></p>' +
-        '</div>' +
-        '</div>',
+            '<h3>Like On GitHub</h3>' +
+            '<div class="clogl">' +
+            '<div class="lbllogh"><span class="reqlogh">*</span>Tag for the link</div>' +
+            `<input list="tagOpt" name="tag">
+            <datalist id="tagOpt">
+                <option value="">None</option>
+                <option value="to_read">to_read</option>
+                <option value="collect">collect</option>
+                <option value="tools">tools</option>
+            </datalist>`  +
+            '<div class="lbllogh"><span class="reqlogh">*</span>Title (label for the link)</div>' +
+            '<input type="text" name="title">' +
+            '<input type="hidden" name="cite">' +
+            '<div class="lbllogh"><span class="reqlogh">*</span>Notes (Notes for the link)</div>' +
+            '<textarea  name="note"> </textarea>' +
+
+            '<div class="clogl">' +
+            '<input type="hidden" name="url">' +
+            '</div>' +
+
+            '<div class="clogl">' +
+            '<div class="lbllogh"><span class="reqlogh">*</span>Comment (commit message)</div>' +
+            '<textarea name="comment"></textarea>' +
+            '</div>' +
+            '<div id="action-btns">' +
+            '<div class="btn btn-primary" id="logh_btn_save">Save</div>' +
+            '<div class="btn" id="logh_btn_cancel">Cancel</div>' +
+            '</div>' +
+            '<div class="elogh hlogh">' +
+            '<p></p>' +
+            '</div>' +
+            '</div>',
 
         // References to DOM elements
         EX_COTAINER: '.logh',
         EX_INPUT_TITLE: '.logh input[name="title"]',
+        EX_INPUT_NOTE: '.logh textarea[name="note"]',
+        EX_INPUT_TAG: '.logh input[name="tag"]',
+        EX_INPUT_CITE: '.logh input[name="cite"]',
         EX_INPUT_URL: '.logh input[name="url"]',
         EX_INPUT_COMMENT: '.logh textarea[name="comment"]',
         EX_CONTAINER_BODY: 'body',
@@ -188,6 +213,9 @@
             }
 
             let activeTabTitle = $(Config.EX_INPUT_TITLE).val(),
+                activeNote = $(Config.EX_INPUT_NOTE).val(),
+                activeTag = $(Config.EX_INPUT_TAG).val(),
+                activeCite = $(Config.EX_INPUT_CITE).val(),
                 activeTabUrl = $(Config.EX_INPUT_URL).val(),
                 commitMessage = $(Config.EX_INPUT_COMMENT).val();
 
@@ -199,7 +227,19 @@
                         encodedContent = response.content,
                         decodedContent = decodeURIComponent(escape(window.atob(encodedContent)));
 
-                    const dataToAppend = `- [${activeTabTitle}](${activeTabUrl}) \n`;
+                    let tag = activeTag ? `<**${activeTag}**>` : '';
+                    if (activeNote){
+                        activeNote =`\n    - note: ` +
+                            activeNote.split('\n').join('\n      > ');
+                     }
+
+                    if (activeCite){
+                        activeCite ='\n    - > '+
+                            activeCite.split('\n').join('\n      > ');
+                     }
+                    const dataToAppend = `\n\n - ##### ${tag} [${activeTabTitle}](${activeTabUrl}) ${activeNote}${activeCite}\n\n`;
+
+                    //console.log(dataToAppend);
 
                     // append data in the front
                     decodedContent = Repo.appendDataBefore(dataToAppend, decodedContent);
@@ -265,12 +305,14 @@
             if (content.trim().length === 0) {
                 content += '# today-i-liked \nContent that I liked. Saved using https://goo.gl/Wj595G \n';
             }
-            const arr = content.split('###');
+            const arr = content.split('### _');
             // if the length of arr is 1, then it is the first time to append data
+
             if (arr.length === 1) {
                 arr[0] += Repo.getDateHeader();
                 arr[0] += dataToAppend;
                 content = arr.join('');
+
             } else {
                 // if has not append data of currentDate, then append DateHeader
                 if (!Repo.isCurrentDateExists(content)) {
@@ -278,8 +320,10 @@
                     arr[0] += dataToAppend;
                 } else {    // if already have date then append to that
                     arr[1] += dataToAppend;
+                    console.log('arr[1]',':\n',arr[1]);
                 }
-                content = arr.join('###');
+                content = arr.join('### _');
+                console.log('content',':\n',content);
             }
             return content;
         },
@@ -290,7 +334,7 @@
          * @returns {string}
          */
         getDateHeader: function () {
-            return `\n### ${Repo.getCurrentDate()} \n`;
+            return `\n### _ ${Repo.getCurrentDate()} \n`;
         },
 
         /**
@@ -411,21 +455,25 @@
 
                 // master key binding for which extension will be enabled
                 key(Config.MASTER_KEY, function () {
+                    let MouseSelText = getMouseSelectText();
+                    //console.log(MouseSelText);
                     Helper.showPopup();
-
-                    $(Config.EX_INPUT_TITLE).focus();
-
                     // get the active tab
+                    $(Config.EX_INPUT_NOTE).focus(); //after eval mouse select
                     ActiveTab.get(function (activeTab) {
 
                         if (!activeTab) {
                             return false;
                         }
 
+                        //console.log('MouseSelText',MouseSelText,getMouseSelectText())
                         $(Config.EX_INPUT_TITLE).val(activeTab.title);
+                        $(Config.EX_INPUT_CITE).val(MouseSelText);
                         $(Config.EX_INPUT_URL).val(activeTab.url);
                         $(Config.EX_INPUT_COMMENT).val('New Link: ' + activeTab.title);
                     });
+
+
                 });
             }
         };
