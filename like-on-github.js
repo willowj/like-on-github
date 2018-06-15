@@ -214,7 +214,7 @@ function getMouseSelectText  () {
 
             let activeTabTitle = $(Config.EX_INPUT_TITLE).val(),
                 activeNote = $(Config.EX_INPUT_NOTE).val(),
-                activeTag = $(Config.EX_INPUT_TAG).val(),
+                activeTag = $(Config.EX_INPUT_TAG).val() || 'collect',
                 activeCite = $(Config.EX_INPUT_CITE).val(),
                 activeTabUrl = $(Config.EX_INPUT_URL).val(),
                 commitMessage = $(Config.EX_INPUT_COMMENT).val();
@@ -227,7 +227,7 @@ function getMouseSelectText  () {
                         encodedContent = response.content,
                         decodedContent = decodeURIComponent(escape(window.atob(encodedContent)));
 
-                    let tag = activeTag ? `<**${activeTag}**>` : '';
+                    let tag = `<**${activeTag}**>`;
                     if (activeNote){
                         activeNote =`\n    - note: ` +
                             activeNote.split('\n').join('\n      > ');
@@ -237,12 +237,12 @@ function getMouseSelectText  () {
                         activeCite ='\n    - > '+
                             activeCite.split('\n').join('\n      > ');
                      }
-                    const dataToAppend = `\n\n - ##### ${tag} [${activeTabTitle}](${activeTabUrl}) ${activeNote}${activeCite}\n\n`;
+                    let date = (new Date()).toLocaleString().split(' ')[0]
 
-                    //console.log(dataToAppend);
+                    const dataToAppend = `\n\n - ##### ${tag} [${activeTabTitle}](${activeTabUrl})    ${date} ${activeNote}${activeCite}\n\n`;
 
                     // append data in the front
-                    decodedContent = Repo.appendDataBefore(dataToAppend, decodedContent);
+                    decodedContent = Repo.appendDataBefore(dataToAppend, tag, decodedContent);
 
                     // decode content
                     encodedContent = window.btoa(unescape(encodeURIComponent(decodedContent)));
@@ -300,8 +300,9 @@ function getMouseSelectText  () {
          * @param content
          * @returns {String}
          */
-        appendDataBefore: function (dataToAppend, content) {
+        appendDataBefore: function (dataToAppend,tag, content) {
             // If the file is empty
+            tag = tag.toUpperCase()
             if (content.trim().length === 0) {
                 content += '# today-i-liked \nContent that I liked. Saved using https://goo.gl/Wj595G \n';
             }
@@ -309,21 +310,24 @@ function getMouseSelectText  () {
             // if the length of arr is 1, then it is the first time to append data
 
             if (arr.length === 1) {
-                arr[0] += Repo.getDateHeader();
+                arr[0] += '### _' + tag + '\n';//Repo.getDateHeader();
                 arr[0] += dataToAppend;
                 content = arr.join('');
-
             } else {
-                // if has not append data of currentDate, then append DateHeader
-                if (!Repo.isCurrentDateExists(content)) {
-                    arr[0] += Repo.getDateHeader();
+                var found = false;
+                for (var i = arr.length - 1; i >= 0; i--) {
+                    if (arr[i] .indexOf(tag + '\n')>-1) {
+                        //  if already have same tag then append to that
+                        arr[i] += dataToAppend;
+                        found = true
+                        break;
+                    }
+                }
+                if (found == false){ // not found append to first part
+                    arr[0] += '### _' + tag + '\n';
                     arr[0] += dataToAppend;
-                } else {    // if already have date then append to that
-                    arr[1] += dataToAppend;
-                    console.log('arr[1]',':\n',arr[1]);
                 }
                 content = arr.join('### _');
-                console.log('content',':\n',content);
             }
             return content;
         },
