@@ -33,6 +33,7 @@ function getMouseSelectText  () {
 
             Helper.resetPopupHtml();
 
+
             $(Config.EX_COTAINER).hide();
             $(Config.EX_INPUT_TITLE).val('');
             $(Config.EX_INPUT_NOTE).val('');
@@ -162,6 +163,7 @@ function getMouseSelectText  () {
 
         // Key codes for certain actions
         ESCAPE_KEY: 27,
+        ENTER_KEY: 13,
 
         // REPO
         BASE_URL: 'https://api.github.com/repos',
@@ -420,11 +422,18 @@ function getMouseSelectText  () {
                         Helper.closePopup();
                     }
                 });
+                $(document).on('keyup', function (e) {
+                    if ($(Config.EX_COTAINER).css('display')=='none') return;
 
+                    if (e.keyCode === Config.ENTER_KEY) {
+                       $(Config.EX_BTN_SAVE).click();
+                    }
+                });
                 // if clicked outside the popup
                 $(document).on('mouseup', function (e) {
-                    let container = $(Config.EX_COTAINER);
 
+                    let container = $(Config.EX_COTAINER);
+                    if (container.css('display')=='none') return;
                     if (!container.is(e.target) && container.has(e.target).length === 0) {
                         Helper.closePopup();
                     }
