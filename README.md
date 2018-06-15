@@ -5,7 +5,7 @@ collect any interesting link or note to github repo
 
 - feature
   - with mouse select text as cite
-  - caratory by tag
+  - category by tag
   - can add notes
 
 ### Installation
