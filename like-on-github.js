@@ -14,8 +14,8 @@ function getMouseSelectText  () {
 
     return window.getSelection().toString();
     }
-    // body...
 }
+
 (function () {
 
     var Helper = {
@@ -216,7 +216,7 @@ function getMouseSelectText  () {
 
             let activeTabTitle = $(Config.EX_INPUT_TITLE).val(),
                 activeNote = $(Config.EX_INPUT_NOTE).val(),
-                activeTag = $(Config.EX_INPUT_TAG).val() || 'collect',
+                activeTag = $(Config.EX_INPUT_TAG).val().trim() || 'collect',
                 activeCite = $(Config.EX_INPUT_CITE).val(),
                 activeTabUrl = $(Config.EX_INPUT_URL).val(),
                 commitMessage = $(Config.EX_INPUT_COMMENT).val();
